@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">CodingAssignment</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="btn_google_maps">Lanzar Google Maps</string>
+    <string name="placeholder_address">Dirección:</string>
+    <string name="placeholder_open_now">Abierto Ahora:</string>
+    <string name="placeholder_rating">Rating:</string>
+    <string name="placeholder_type">Tipo:</string>
+
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="no_description">Información no disponible</string>
+</resources>
