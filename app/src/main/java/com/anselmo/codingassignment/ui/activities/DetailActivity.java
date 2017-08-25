@@ -1,15 +1,17 @@
-package com.anselmo.codingassignment.ui;
+package com.anselmo.codingassignment.ui.activities;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import com.anselmo.codingassignment.R;
 import com.anselmo.codingassignment.models.BBVALocation;
+import com.anselmo.codingassignment.ui.common.BaseActivity;
 import com.anselmo.codingassignment.utils.Constants;
 import com.anselmo.codingassignment.utils.Prefs;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -28,7 +30,7 @@ import java.io.IOException;
  * Created by chemo on 8/24/17.
  */
 
-public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
+public class DetailActivity extends BaseActivity implements OnMapReadyCallback, View.OnClickListener {
     private BBVALocation currentLocation = null;
     private LatLng currentCoordinates = null;
     private BitmapDescriptor bitmapDescriptor = null;
@@ -40,11 +42,21 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private TextView rating;
     private TextView type;
     private Button btnMaps;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        toolbar = getToolbar();
+        toolbar.setNavigationIcon(R.mipmap.ic_up);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         btnMaps  = (Button) findViewById(R.id.btnGoogleMaps);
         address  = (TextView) findViewById(R.id.lbl_address);
@@ -71,9 +83,14 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                     break;
             }
 
-            address.setText(getString(R.string.placeholder_address) + " " + currentLocation.getFormatted_address());
-            rating.setText(getString(R.string.placeholder_rating) + " " + currentLocation.getRating());
-            type.setText(getString(R.string.placeholder_type) + " " + currentLocation.getTypes().get(0));
+            try {
+                toolbar.setTitle(currentLocation.getName());
+                address.setText(getString(R.string.placeholder_address) + " " + currentLocation.getFormatted_address());
+                rating.setText(getString(R.string.placeholder_rating) + " " + currentLocation.getRating());
+                type.setText(getString(R.string.placeholder_type) + " " + currentLocation.getTypes().get(0));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
         btnMaps.setOnClickListener(this);
@@ -116,14 +133,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         }).start();
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentCoordinates, 15));
-
-        // Zoom in, animating the camera.
         googleMap.animateCamera(CameraUpdateFactory.zoomIn());
-
-        // Zoom out to zoom level 10, animating with a duration of 2 seconds.
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
-
-        // Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(currentCoordinates)      // Sets the center of the map to Mountain View
                 .zoom(17)                   // Sets the zoom
